@@ -18,7 +18,7 @@ app.get('/events', async (req, response) => {
         };
 
         const fetch = await import('node-fetch'); // Use dynamic import for ES module
-        const fetchResponse = await fetch.default(`${API_BASE}/rest/v1/events?start_date=gte.now`, {
+        const fetchResponse = await fetch.default(`${API_BASE}/rest/v1/events?select=workshop_type,title,online,training,sold_out,kids,start_date,end_date,zip_code,latitude,longitude,source_link,department,city,address,location_name,full_location,scrape_date&start_date=gte.now`, {
             method: 'GET',
             headers: headers,
             cache: 'no-cache'
