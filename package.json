@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/trouver-une-fresque/trouver-une-fresque-proxy.git"
+    "url": "git+https://github.com/openfresque/trouver-une-fresque-proxy.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/trouver-une-fresque/trouver-une-fresque-proxy/issues"
+    "url": "https://github.com/openfresque/trouver-une-fresque-proxy/issues"
   },
-  "homepage": "https://github.com/trouver-une-fresque/trouver-une-fresque-proxy#readme",
+  "homepage": "https://github.com/openfresque/trouver-une-fresque-proxy#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
