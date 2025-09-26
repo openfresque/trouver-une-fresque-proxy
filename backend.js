@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
+const NodeCache = require('node-cache')
 
 const PORT = 8000;
 const API_BASE = "https://xztalmhvgcwkflpwtzls.supabase.co";
@@ -10,8 +11,25 @@ dotenv.config()
 const app = express();
 app.use(cors());
 
+// In-memory cache: default TTL 24 hours (86400 seconds). We rely on per-entry TTL only
+// (no scheduled global flush). Expired entries are removed on access or by the
+// internal check period.
+const CACHE_TTL_SECONDS = 24 * 60 * 60; // 86400
+const cache = new NodeCache({ stdTTL: CACHE_TTL_SECONDS, checkperiod: 600 });
+
 app.get('/events', async (req, response) => {
     try {
+        // Use the full originalUrl (path + query) as the cache key so different query params
+        // would result in different cache entries. Please note that the API returns all events
+        // regardless of criteria; filtering is performed on the client side.
+        const cacheKey = req.originalUrl || req.url || '/events';
+
+        const cached = cache.get(cacheKey);
+        if (cached) {
+            // Return cached response
+            return response.json(cached);
+        }
+
         const headers = {
             'apikey': process.env.API_KEY,
             'Content-Type': 'application/json'
@@ -29,6 +47,10 @@ app.get('/events', async (req, response) => {
         }
 
         const data = await fetchResponse.json();
+
+        // Store successful responses in cache with explicit TTL (redundant with stdTTL but explicit)
+        cache.set(cacheKey, data, CACHE_TTL_SECONDS);
+
         response.json(data);
     } catch (error) {
         console.error('Error:', error);
